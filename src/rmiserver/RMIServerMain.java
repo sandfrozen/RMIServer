@@ -29,10 +29,10 @@ public class RMIServerMain {
 
             //System.setProperty("java.rmi.server.codebase","file:/C:/Users/Jacek/workspace/RMIServer/bin/");
             //System.setProperty("java.rmi.server.codebase","file:/C:/Users/Jacek/NetBeansProjects/RMIServer/build/classes/");
-            System.setProperty("java.rmi.server.codebase","file:/C:/Users/tomek.buslowski/NetBeansProjects/RMIServer/build/classes/");
-            //System.setProperty("java.rmi.server.codebase", "http://192.168.1.102/jaco/");
+            //System.setProperty("java.rmi.server.codebase","file:/C:/Users/tomek.buslowski/NetBeansProjects/RMIServer/build/classes/");
+            System.setProperty("java.rmi.server.codebase", "http://82.139.136.217/tomek/");
             System.out.println("Codebase: " + System.getProperty("java.rmi.server.codebase"));
-            //LocateRegistry.createRegistry(1099);
+            LocateRegistry.createRegistry(1099);
             // MAC in terminal: rmiregistry &
             // % fg - checkout is running rmiregistry, ctrl + c for stop
             MyServerImpl obj1 = new MyServerImpl();

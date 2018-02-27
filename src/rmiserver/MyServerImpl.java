@@ -32,7 +32,7 @@ public class MyServerImpl extends UnicastRemoteObject implements MyServerInt {
     
     @Override
     public String calculator(String text) throws RemoteException {
-        System.out.println("Calculating: " + text);
+        System.out.println("Recieved from client: " + text);
         String result = "error";
         if( text.matches("^([\\d]+([\\.]{1}[\\d]+)?)[ ]*[+-\\/\\*]{1}[ ]*([\\d]+([\\.]{1}[\\d]+)?)[ ]*$") ){
             String as = ""; // a as string
@@ -84,7 +84,7 @@ public class MyServerImpl extends UnicastRemoteObject implements MyServerInt {
         } else {
             result = "invalid format";
         }
-        System.out.println("Calculated:  " + result);
+        System.out.println("Sended to clinet:  " + result);
         return result;
     }
 
