@@ -16,27 +16,45 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 
 import java.rmi.registry.LocateRegistry;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Properties;
 
 public class RMIServerMain {
 
     public static void main(String[] args) {
+        
+        try {
+            String url = "jdbc:postgresql://localhost/iit_db_dev";
+            Properties props = new Properties();
+            props.setProperty("user","tomek.buslowski");
+            props.setProperty("password","tomek");
+            //props.setProperty("ssl","false");
+            Connection conn = DriverManager.getConnection(url, props);
+                
+            //url = "jdbc:postgresql://localhost/iit_db_dev?user=tomek.buslowski&password=tomek&ssl=false";
+            //conn = DriverManager.getConnection(url);
+                
+            System.out.println("Połączono do bazy: " + conn.getCatalog());
+                
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         try {
             System.setProperty("java.security.policy", "security.policy");
             if (System.getSecurityManager() == null) {
                 System.setSecurityManager(new SecurityManager());
             }
-
-            //System.setProperty("java.rmi.server.codebase","file:/C:/Users/Jacek/workspace/RMIServer/bin/");
-            //System.setProperty("java.rmi.server.codebase","file:/C:/Users/Jacek/NetBeansProjects/RMIServer/build/classes/");
-            //System.setProperty("java.rmi.server.codebase","file:/C:/Users/tomek.buslowski/NetBeansProjects/RMIServer/build/classes/");
-            System.setProperty("java.rmi.server.codebase", "http://82.139.136.217/tomek/");
+            System.setProperty("java.rmi.server.hostname", "82.139.138.91");
+            System.out.println("Hostname: " + System.getProperty("java.rmi.server.hostname"));
+            System.setProperty("java.rmi.server.codebase", "http://82.139.138.91/tomek/");
             System.out.println("Codebase: " + System.getProperty("java.rmi.server.codebase"));
-            LocateRegistry.createRegistry(1099);
-            // MAC in terminal: rmiregistry &
-            // % fg - checkout is running rmiregistry, ctrl + c for stop
+            //LocateRegistry.createRegistry(1099);
+            
             MyServerImpl obj1 = new MyServerImpl();
-            Naming.rebind("//localhost/ABC", obj1);
+            Naming.rebind("//82.139.138.91/ABC", obj1);
             System.out.println("Serwer oczekuje ...");
 
         } catch (RemoteException | MalformedURLException e) {

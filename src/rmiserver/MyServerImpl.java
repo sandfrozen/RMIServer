@@ -12,6 +12,9 @@ package rmiserver;
 import java.rmi.RemoteException;
 
 import java.rmi.server.UnicastRemoteObject;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 
 
@@ -29,6 +32,18 @@ public class MyServerImpl extends UnicastRemoteObject implements MyServerInt {
         System.out.println("MyServerImpl.getDescription: " + text + " " + i);
         return "getDescription: " + text + " " + i;
     }
+    
+//    public String query() throws RemoteException, SQLException {
+//        Statement st = conn.createStatement();
+//        ResultSet rs = st.executeQuery("SELECT * FROM mytable WHERE columnfoo = 500");
+//        while (rs.next())
+//        {
+//            System.out.print("Column 1 returned ");
+//            System.out.println(rs.getString(1));
+//        }
+//        rs.close();
+//        st.close();
+//    }
     
     @Override
     public String calculator(String text) throws RemoteException {
