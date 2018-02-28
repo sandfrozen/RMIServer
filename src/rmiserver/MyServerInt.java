@@ -11,13 +11,13 @@ package rmiserver;
  */
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.sql.SQLException;
+import java.util.List;
 
 public interface MyServerInt extends Remote{
     String getDescription(String text) throws RemoteException;
     String calculator(String text) throws RemoteException;
     
-    double sum(double a, double b) throws RemoteException;
-    double subtract(double a, double b) throws RemoteException;
-    double multiply(double a, double b) throws RemoteException;
-    double divide(double a, double b) throws RemoteException;
+    List<Product> productsList() throws RemoteException, SQLException;
+    Product productByName(String name) throws RemoteException, SQLException;
 }

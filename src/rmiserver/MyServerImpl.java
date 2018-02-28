@@ -12,9 +12,14 @@ package rmiserver;
 import java.rmi.RemoteException;
 
 import java.rmi.server.UnicastRemoteObject;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 
 
@@ -32,18 +37,6 @@ public class MyServerImpl extends UnicastRemoteObject implements MyServerInt {
         System.out.println("MyServerImpl.getDescription: " + text + " " + i);
         return "getDescription: " + text + " " + i;
     }
-    
-//    public String query() throws RemoteException, SQLException {
-//        Statement st = conn.createStatement();
-//        ResultSet rs = st.executeQuery("SELECT * FROM mytable WHERE columnfoo = 500");
-//        while (rs.next())
-//        {
-//            System.out.print("Column 1 returned ");
-//            System.out.println(rs.getString(1));
-//        }
-//        rs.close();
-//        st.close();
-//    }
     
     @Override
     public String calculator(String text) throws RemoteException {
@@ -99,29 +92,77 @@ public class MyServerImpl extends UnicastRemoteObject implements MyServerInt {
         } else {
             result = "invalid format";
         }
-        System.out.println("Sended to clinet:  " + result);
+        System.out.println("Sended to client:  " + result);
         return result;
     }
 
     @Override
-    public double sum(double a, double b) throws RemoteException {
-        System.out.println("Calculating operation: " + a + " + " + b + " = " + a+b);
-        return a+b;
-    }
-    @Override
-    public double subtract(double a, double b) throws RemoteException {
-        System.out.println("Calculating operation: " + a + " - " + b + " = " + (a-b));
-        return a-b;
-    }
-    @Override
-    public double multiply(double a, double b) throws RemoteException {
-        System.out.println("Calculating operation: " + a + " * " + b + " = " + a*b);
-        return a*b;
-    }
-    @Override
-    public double divide(double a, double b) throws RemoteException {
-        System.out.println("Calculating operation: " + a + " : " + b + " = " + (b == 0.0 ? 0.0 : a/b));
-        return b == 0 ? 0.0 : a/b;
+    public List<Product> productsList() throws RemoteException, SQLException {
+        List<Product> products = new ArrayList<>();
+        try {
+            String url = "jdbc:postgresql://localhost/shop";
+            Properties props = new Properties();
+            props.setProperty("user","tomek.buslowski");
+            props.setProperty("password","tomek");
+            //props.setProperty("ssl","false");
+            Connection conn = DriverManager.getConnection(url, props);
+                
+            System.out.println("Połączono do bazy: " + conn.getCatalog());
+            
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery( "SELECT * FROM PRODUCTS;" );
+            
+            while ( rs.next() ) {
+                Product p = new Product();
+                p.id = rs.getInt("id");
+                p.name = rs.getString("name");
+                p.price =  rs.getDouble("price");
+                products.add(p);
+            }
+            
+            rs.close();
+            stmt.close();
+            conn.close();
+                
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return products;
     }
 
+    @Override
+    public Product productByName(String name) throws RemoteException, SQLException {
+        Product p = null;
+        try {
+            String url = "jdbc:postgresql://localhost/shop";
+            Properties props = new Properties();
+            props.setProperty("user","tomek.buslowski");
+            props.setProperty("password","tomek");
+            //props.setProperty("ssl","false");
+            Connection conn = DriverManager.getConnection(url, props);
+                
+            System.out.println("Połączono do bazy: " + conn.getCatalog());
+            
+            Statement stmt = conn.createStatement();
+            String query = "SELECT * FROM PRODUCTS WHERE name LIKE '%" + name + "%' LIMIT 1"; 
+            ResultSet rs = stmt.executeQuery(query);
+            
+            while ( rs.next() ) {
+                p = new Product();
+                p.id = rs.getInt("id");
+                p.name = rs.getString("name");
+                p.price =  rs.getDouble("price");
+            }
+            
+            rs.close();
+            stmt.close();
+            conn.close();
+                
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return p;
+    }
 }
